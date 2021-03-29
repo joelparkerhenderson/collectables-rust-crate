@@ -1,0 +1,13 @@
+[package]
+name = "sixarm_collections"
+version = "1.1.1"
+authors = ["Joel Parker Henderson <joel@joelparkerhenderson.com>"]
+edition = "2018"
+description = "Collections for HashMapToSet and BTreeMapToSet as trait extensions. By SixArm.com."
+readme = "README.md"
+repository = "https://github.com/sixarm/sixarm-collections-rust-crate/"
+license = "MIT OR Apache-2.0 OR GPL-2.0-only"
+keywords = ["collections", "btree", "hash", "map", "set"]
+categories = ["algorithms", "data-structures", "rust-patterns"]
+
+[dependencies]
