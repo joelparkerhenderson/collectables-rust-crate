@@ -34,10 +34,10 @@ impl<K, V> BTreeMapToSetExt<K, V> for BTreeMapToSet<K, V> {
     ///
     /// ```
     /// use sixarm_collections::*;
-    /// let collection: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
-    /// collection.sub_insert(1, 2);
-    /// assert_eq!(subject.sub_contains(&1, &2), true);
-    /// assert_eq!(subject.sub_contains(&3, &4), false);
+    /// let mut a: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
+    /// a.sub_insert(1, 2);
+    /// assert_eq!(a.sub_contains(&1, &2), true);
+    /// assert_eq!(a.sub_contains(&3, &4), false);
     /// ```
     #[inline]
     fn sub_contains(&self, key: &K, value: &V) -> bool
@@ -59,9 +59,9 @@ impl<K, V> BTreeMapToSetExt<K, V> for BTreeMapToSet<K, V> {
     ///
     /// ```
     /// use sixarm_collections::*;
-    /// let collection: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
-    /// collection.sub_insert(1, 2);
-    /// assert_eq!(subject.sub_contains(&1, &2), true);
+    /// let mut a: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
+    /// a.sub_insert(1, 2);
+    /// assert_eq!(a.sub_contains(&1, &2), true);
     /// ```
     #[inline]
     fn sub_insert(&mut self, key: K, value: V) -> bool    
@@ -85,11 +85,11 @@ impl<K, V> BTreeMapToSetExt<K, V> for BTreeMapToSet<K, V> {
     ///
     /// ```
     /// use sixarm_collections::*;
-    /// let collection: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
-    /// collection.sub_insert(1, 2);
-    /// assert_eq!(subject.sub_contains(&1, &2), true);
-    /// collection.sub_remove(&1, &2);
-    /// assert_eq!(subject.sub_contains(&1, &2), false);
+    /// let mut a: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
+    /// a.sub_insert(1, 2);
+    /// assert_eq!(a.sub_contains(&1, &2), true);
+    /// a.sub_remove(&1, &2);
+    /// assert_eq!(a.sub_contains(&1, &2), false);
     /// ```
     #[inline]
     fn sub_remove(&mut self, key: &K, value: &V) -> bool 
@@ -106,15 +106,15 @@ impl<K, V> BTreeMapToSetExt<K, V> for BTreeMapToSet<K, V> {
 }
 
 #[cfg(test)]
-//#[macro_use] extern crate assert_matches;
 mod tests {
     use super::*;
+    use sixarm_assert::*;
     use crate::btree_map_to_set::BTreeMapToSet;
 
     #[test]
     /// Test `sub_contains` with some items.
     fn test_sub_contains() {
-        let mut a: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
+        let mut subject: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
         let k = 1;
         let v = 2;
         let absent = 3;
@@ -126,7 +126,7 @@ mod tests {
     #[test]
     /// Test `sub_insert` with some items.
     fn test_sub_insert() {
-        let mut a: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
+        let mut subject: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
         let k1 = 1;
         let k2 = 2;
         let v1 = 3;
@@ -135,48 +135,28 @@ mod tests {
         let v4 = 7;
         // Item 1
         assert_eq!(subject.sub_insert(k1, v1), true);
-        let mut keys = a.keys().collect::<Vec<_>>();
-        keys.sort();
-        assert_eq!(keys, vec![&k1]);
-        let mut values = a.get(&k1).unwrap().into_iter().collect::<Vec<_>>();
-        values.sort();
-        assert_eq!(values, vec![&v1]);
+        //assert_set_eq!(subject.keys(), [k1]);
+        assert_set_eq!(subject.get(&k1).unwrap(), [v1]);
         // Item 2
         assert_eq!(subject.sub_insert(k1, v2), true);
-        let mut keys = a.keys().collect::<Vec<_>>();
-        keys.sort();
-        assert_eq!(keys, vec![&k1]);  
-        let mut values = a.get(&k1).unwrap().into_iter().collect::<Vec<_>>();
-        values.sort();
-        assert_eq!(values, vec![&v1, &v2]);
+        //assert_set_eq!(subject.keys(), [k1]);  
+        assert_set_eq!(subject.get(&k1).unwrap(), [v1, v2]);
         // Item 3
         assert_eq!(subject.sub_insert(k2, v3), true);
-        let mut keys = a.keys().collect::<Vec<_>>();
-        keys.sort();
-        assert_eq!(keys, vec![&k1, &k2]);  
-        let mut values = a.get(&k1).unwrap().into_iter().collect::<Vec<_>>();
-        values.sort();
-        assert_eq!(values, vec![&v1, &v2]);
-        let mut values = a.get(&k2).unwrap().into_iter().collect::<Vec<_>>();
-        values.sort();
-        assert_eq!(values, vec![&v3]);
+        //assert_set_eq!(subject.keys(), [k1, k2]);  
+        assert_set_eq!(subject.get(&k1).unwrap(), [v1, v2]);
+        assert_set_eq!(subject.get(&k2).unwrap(), [v3]);
         // Item 4
         assert_eq!(subject.sub_insert(k2, v4), true);
-        let mut keys = a.keys().collect::<Vec<_>>();
-        keys.sort();
-        assert_eq!(keys, vec![&k1, &k2]);
-        let mut values = a.get(&k1).unwrap().into_iter().collect::<Vec<_>>();
-        values.sort();
-        assert_eq!(values, vec![&v1, &v2]);
-        let mut values = a.get(&k2).unwrap().into_iter().collect::<Vec<_>>();
-        values.sort();
-        assert_eq!(values, vec![&v3, &v4]);
+        //assert_set_eq!(subject.keys(), [k1, k2]);
+        assert_set_eq!(subject.get(&k1).unwrap(), [v1, v2]);
+        assert_set_eq!(subject.get(&k2).unwrap(), [v3, v4]);
     }
 
     #[test]
     /// Test `remove` with a present item.
     fn test_sub_remove_x_present_item() {
-        let mut a: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
+        let mut subject: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
         let k = 1;
         let v = 2;
         assert_eq!(subject.sub_insert(k, v), true);
@@ -188,7 +168,7 @@ mod tests {
     #[test]
     /// Test `remove` with an absent item.
     fn test_sub_remove_x_absent_item() {
-        let mut a: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
+        let mut subject: BTreeMapToSet<u8, u8> = BTreeMapToSet::new();
         let k = 1;
         let v = 2;
         let z = 3;

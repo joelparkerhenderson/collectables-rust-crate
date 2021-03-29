@@ -1,8 +1,7 @@
-mod assert;
-mod btree_map_to_set;
-mod btree_map_of_file_len_to_set_of_path_buf;
-mod hash_map_to_set;
-mod hash_map_of_file_len_to_set_of_path_buf;
+pub mod btree_map_to_set;
+pub mod btree_map_of_file_len_to_set_of_path_buf;
+pub mod hash_map_to_set;
+pub mod hash_map_of_file_len_to_set_of_path_buf;
 
 pub use self::btree_map_to_set::BTreeMapToSet;
 pub use self::btree_map_to_set::BTreeMapToSetExt;

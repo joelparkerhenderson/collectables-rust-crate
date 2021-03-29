@@ -11,3 +11,4 @@ keywords = ["collections", "btree", "hash", "map", "set"]
 categories = ["algorithms", "data-structures", "rust-patterns"]
 
 [dependencies]
+sixarm_assert = "1"

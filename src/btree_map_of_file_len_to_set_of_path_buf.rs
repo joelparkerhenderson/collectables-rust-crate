@@ -22,12 +22,19 @@ impl BTreeMapOfFileLenToSetOfPathBufExt for BTreeMapOfFileLenToSetOfPathBuf {
     ///
     /// ```
     /// use sixarm_collections::*;
-    /// let mut collection: BTreeMapOfFileLenToSetOfPathBuf<FileLen, SetOfPathBuf> = BTreeMapOfFileLenToSetOfPathBuf::new();
-    /// let a = PathBuf("alpha.txt");
-    /// let b = PathBuf("bravo.txt");
-    /// collection.sub_insert_path(a);
-    /// assert_eq!(subject.sub_contains_path(a), true);
-    /// assert_eq!(subject.sub_contains_path(b), false);
+    /// use std::collections::{BTreeMap, BTreeSet};
+    /// use std::path::PathBuf;
+    ///
+    /// let mut a: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
+    /// # std::fs::write("alpha.txt", "alpha");
+    /// # std::fs::write("bravo.txt", "bravo");
+    /// let alpha = PathBuf::from("alpha.txt");
+    /// let bravo = PathBuf::from("bravo.txt");
+    /// a.sub_insert_path(alpha.clone());
+    /// assert_eq!(a.sub_contains_path(&alpha), true);
+    /// assert_eq!(a.sub_contains_path(&bravo), false);
+    /// # std::fs::remove_file("alpha.txt");
+    /// # std::fs::remove_file("bravo.txt");
     /// ```
     #[inline]
     fn sub_contains_path(&self, value: &PathBuf) -> bool {
@@ -46,10 +53,15 @@ impl BTreeMapOfFileLenToSetOfPathBufExt for BTreeMapOfFileLenToSetOfPathBuf {
     ///
     /// ```
     /// use sixarm_collections::*;
-    /// let mut collection: BTreeMapOfFileLenToSetOfPathBuf<FileLen, SetOfPathBuf> = BTreeMapOfFileLenToSetOfPathBuf::new();
-    /// let a = PathBuf("alpha.txt");
-    /// collection.sub_insert_path(a);
-    /// assert_eq!(subject.sub_contains_path(a), true);
+    /// use std::collections::{BTreeMap, BTreeSet};
+    /// use std::path::PathBuf;
+    ///
+    /// let mut a: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
+    /// # std::fs::write("alpha.txt", "alpha");
+    /// let alpha = PathBuf::from("alpha.txt");
+    /// a.sub_insert_path(alpha.clone());
+    /// assert_eq!(a.sub_contains_path(&alpha), true);
+    /// # std::fs::remove_file("alpha.txt");
     /// ```
     #[inline]
     fn sub_insert_path(&mut self, value: PathBuf) -> bool {
@@ -71,12 +83,17 @@ impl BTreeMapOfFileLenToSetOfPathBufExt for BTreeMapOfFileLenToSetOfPathBuf {
     ///
     /// ```
     /// use sixarm_collections::*;
-    /// let mut collection: BTreeMapOfFileLenToSetOfPathBuf<FileLen, SetOfPathBuf> = BTreeMapOfFileLenToSetOfPathBuf::new();
-    /// let a = PathBuf("alpha.txt");
-    /// collection.sub_insert_path(a);
-    /// assert_eq!(subject.sub_contains_path(&a), true);
-    /// collection.sub_remove_path(&a);
-    /// assert_eq!(subject.sub_contains_path(&a), false);
+    /// use std::collections::{BTreeMap, BTreeSet};
+    /// use std::path::PathBuf;
+    ///
+    /// let mut a: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
+    /// # std::fs::write("alpha.txt", "alpha");
+    /// let alpha = PathBuf::from("alpha.txt");
+    /// a.sub_insert_path(alpha.clone());
+    /// assert_eq!(a.sub_contains_path(&alpha), true);
+    /// a.sub_remove_path(alpha.clone());
+    /// assert_eq!(a.sub_contains_path(&alpha), false);
+    /// # std::fs::remove_file("alpha.txt");
     /// ```
     #[inline]
     fn sub_remove_path(&mut self, value: PathBuf) -> bool {
@@ -90,58 +107,49 @@ impl BTreeMapOfFileLenToSetOfPathBufExt for BTreeMapOfFileLenToSetOfPathBuf {
 }
 
 #[cfg(test)]
-//#[macro_use] extern crate assert_matches;
 mod tests {
     use super::*;
+    use sixarm_assert::*;
     use std::path::PathBuf;
 
     #[test]
-    /// Test `contains` with a true result.
+    /// Test `sub_contains_path`.
     /// Must succeed.
     /// 
-    fn test_contains_path_x_true() {
-        let mut collection: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
+    fn test_sub_contains_path() {
+        let mut subject: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
         let a: PathBuf = [env!("CARGO_MANIFEST_DIR"), "test", "hash_map_of_file_len_to_set_of_path_buf", "alpha.txt"].iter().collect::<PathBuf>();
         let b: PathBuf = [env!("CARGO_MANIFEST_DIR"), "test", "hash_map_of_file_len_to_set_of_path_buf", "bravo.txt"].iter().collect::<PathBuf>();
-        collection.sub_insert_path(a);
-        assert_eq!(subject.sub_contains_path(&b), true);
+        assert!(subject.sub_insert_path(a.clone()));
+        assert_eq!(subject.sub_contains_path(&a), true);
+        assert_eq!(subject.sub_contains_path(&b), false);
     }
 
     #[test]
-    /// Test `contains` with a false result.
+    /// Test `sub_insert_path`.
     /// Must succeed.
     /// 
-    fn test_contains_path_x_false() {
-        let mut collection: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
-        let a: PathBuf = [env!("CARGO_MANIFEST_DIR"), "test", "hash_map_of_file_len_to_set_of_path_buf", "alpha.txt"].iter().collect::<PathBuf>();
-        assert_eq!(subject.sub_contains_path(&a), false);
-    }
-
-    #[test]
-    /// Test `insert` with path.
-    /// Must succeed.
-    /// 
-    fn test_insert_path() {
-        let mut collection: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
+    fn test_sub_insert_path() {
+        let mut subject: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
         let a: PathBuf = [env!("CARGO_MANIFEST_DIR"), "test", "hash_map_of_file_len_to_set_of_path_buf", "alpha.txt"].iter().collect::<PathBuf>();
         let len = 5;
-        assert_eq!(subject.sub_insert_path(a), true);
-        assert_eq!(subject.keys().collect(), [len]);
-        assert_eq!(subject.get(&len).unwrap().contains(&a), true);
+        assert!(subject.sub_insert_path(a.clone()));
+        //assert_set_eq!(subject.keys(), [len]);
+        assert!(subject.get(&len).unwrap().contains(&a));
     }
 
     #[test]
-    /// Test `remove` with path.
+    /// Test `sub_remove_path`.
     /// Must succeed.
     /// 
     fn test_remove_path() {
-        let mut collection: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
+        let mut subject: BTreeMapOfFileLenToSetOfPathBuf = BTreeMapOfFileLenToSetOfPathBuf::new();
         let a: PathBuf = [env!("CARGO_MANIFEST_DIR"), "test", "hash_map_of_file_len_to_set_of_path_buf", "alpha.txt"].iter().collect::<PathBuf>();
         let len = 5;
-        assert_eq!(subject.sub_insert_path(a), true);
-        assert_eq!(subject.sub_remove_path(a), true);
-        assert_eq!(subject.keys().collect(), [len]);
-        assert_eq!(subject.get(&len).unwrap().is_empty(), true);
+        assert!(subject.sub_insert_path(a.clone()));
+        assert!(subject.sub_remove_path(a));
+        //assert_set_eq!(subject.keys(), [len]);
+        assert!(subject.get(&len).unwrap().is_empty());
     }
 
 }
